@@ -9,5 +9,5 @@ import (
 // ACIBuilder creates an aci given a starting ImageManifest and an output io.Writer
 // Build will augmentate the provided ImageManifest adding a pathWhiteList if needed.
 type ACIBuilder interface {
-	Build(im *schema.ImageManifest, out io.Writer) error
+	Build(im schema.ImageManifest, out io.Writer) error
 }

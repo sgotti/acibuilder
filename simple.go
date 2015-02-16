@@ -1,0 +1,46 @@
+package acibuilder
+
+import (
+	"archive/tar"
+	"compress/gzip"
+	"fmt"
+	"io"
+	"path/filepath"
+
+	"github.com/appc/spec/aci"
+	"github.com/appc/spec/schema"
+)
+
+// SimpleACIBuilder is an ACIBuilder that creates an ACI containing the
+// file in the "./rootfs/" of provided path plus the provided imagemanifest
+// without any change.
+type SimpleACIBuilder struct {
+	path string
+}
+
+func NewSimpleACIBuilder(path string) *SimpleACIBuilder {
+	return &SimpleACIBuilder{path: path}
+}
+
+func (b *SimpleACIBuilder) Build(im schema.ImageManifest, out io.Writer) error {
+	gw := gzip.NewWriter(out)
+	tr := tar.NewWriter(gw)
+	defer func() {
+		tr.Close()
+		gw.Close()
+	}()
+
+	aw := aci.NewImageWriter(im, tr)
+
+	err := filepath.Walk(b.path, BuildWalker(b.path, nil, aw))
+	if err != nil {
+		return fmt.Errorf("error walking rootfs: %v", err)
+	}
+
+	err = aw.Close()
+	if err != nil {
+		return fmt.Errorf("unable to close image %s: %v", out, err)
+	}
+
+	return nil
+}

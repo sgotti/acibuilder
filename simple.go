@@ -15,11 +15,16 @@ import (
 // file in the provided path (which should be the rootfs)
 // plus the provided imagemanifest without any change.
 type SimpleACIBuilder struct {
-	path string
+	path        string
+	excludeFunc ExcludeFunc
 }
 
 func NewSimpleACIBuilder(path string) *SimpleACIBuilder {
 	return &SimpleACIBuilder{path: path}
+}
+
+func (b *SimpleACIBuilder) SetExcludeFunc(excludeFunc ExcludeFunc) {
+	b.excludeFunc = excludeFunc
 }
 
 func (b *SimpleACIBuilder) Build(im schema.ImageManifest, out io.Writer) error {
@@ -32,7 +37,7 @@ func (b *SimpleACIBuilder) Build(im schema.ImageManifest, out io.Writer) error {
 
 	aw := aci.NewImageWriter(im, tr)
 
-	err := filepath.Walk(b.path, BuildWalker(b.path, nil, aw))
+	err := filepath.Walk(b.path, BuildWalker(b.path, nil, b.excludeFunc, aw))
 	if err != nil {
 		return fmt.Errorf("error walking rootfs: %v", err)
 	}

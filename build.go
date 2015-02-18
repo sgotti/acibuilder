@@ -10,10 +10,15 @@ import (
 	"github.com/appc/spec/pkg/tarheader"
 )
 
+// function called to check if the given path should be excluded. path is
+// relative to the root dir given to BuildWalker (ex. usr/bin/ls)
+type ExcludeFunc func(path string, info os.FileInfo) (bool, error)
+
 // BuildWalker creates a filepath.WalkFunc that walks over the given root
 // (which is the rootfs of the ACI on disk, NOT the ACI layout on disk) and
 // adds the files in the directory to the given ArchiveWriter
-func BuildWalker(root string, files map[string]struct{}, aw aci.ArchiveWriter) filepath.WalkFunc {
+// If excludeFunc is not nil then it's called for every path
+func BuildWalker(root string, files map[string]struct{}, excludeFunc ExcludeFunc, aw aci.ArchiveWriter) filepath.WalkFunc {
 	// cache of inode -> filepath, used to leverage hard links in the archive
 	inos := map[uint64]string{}
 	return func(path string, info os.FileInfo, err error) error {
@@ -33,6 +38,16 @@ func BuildWalker(root string, files map[string]struct{}, aw aci.ArchiveWriter) f
 		}
 		if relpath == "." {
 			return nil
+		}
+
+		if excludeFunc != nil {
+			exclude, err := excludeFunc(relpath, info)
+			if err != nil {
+				return err
+			}
+			if exclude {
+				return nil
+			}
 		}
 
 		link := ""

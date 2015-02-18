@@ -20,12 +20,17 @@ import (
 // If there are deleted files from the base ACI, the imagemanifest will be
 // augmented with a pathWhiteList containing all the ACI's files
 type DiffACIBuilder struct {
-	basePath string
-	path     string
+	basePath    string
+	path        string
+	excludeFunc ExcludeFunc
 }
 
 func NewDiffACIBuilder(basePath string, path string) *DiffACIBuilder {
 	return &DiffACIBuilder{basePath: basePath, path: path}
+}
+
+func (b *DiffACIBuilder) SetExcludeFunc(excludeFunc ExcludeFunc) {
+	b.excludeFunc = excludeFunc
 }
 
 func (b *DiffACIBuilder) Build(im schema.ImageManifest, out io.Writer) error {
@@ -78,7 +83,7 @@ func (b *DiffACIBuilder) Build(im schema.ImageManifest, out io.Writer) error {
 
 	aw := aci.NewImageWriter(im, tr)
 
-	err = filepath.Walk(b.path, BuildWalker(b.path, files, aw))
+	err = filepath.Walk(b.path, BuildWalker(b.path, files, b.excludeFunc, aw))
 	if err != nil {
 		return fmt.Errorf("error walking rootfs: %v", err)
 	}

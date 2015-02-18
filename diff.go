@@ -15,8 +15,8 @@ import (
 )
 
 // DiffACIBuilder is an ACIBuilder that creates an ACI containing only the
-// different files (in the "./rootfs/") between a base and a new ACI.
-// basePath and path are the paths of the two already extracted ACIs.
+// different files between a base and a new ACI's rootfs.
+// basePath and path are the paths of the rootfs of the two already extracted ACIs.
 // If there are deleted files from the base ACI, the imagemanifest will be
 // augmented with a pathWhiteList containing all the ACI's files
 type DiffACIBuilder struct {
@@ -29,10 +29,8 @@ func NewDiffACIBuilder(basePath string, path string) *DiffACIBuilder {
 }
 
 func (b *DiffACIBuilder) Build(im schema.ImageManifest, out io.Writer) error {
-	baseRootFS := filepath.Join(b.basePath, "/rootfs")
-	rootFS := filepath.Join(b.path, "/rootfs")
 
-	fsd := fsdiffer.NewSimpleFSDiffer(baseRootFS, rootFS)
+	fsd := fsdiffer.NewSimpleFSDiffer(b.basePath, b.path)
 
 	changes, err := fsd.Diff()
 
@@ -45,7 +43,7 @@ func (b *DiffACIBuilder) Build(im schema.ImageManifest, out io.Writer) error {
 	hasDeleted := false
 	for _, c := range changes {
 		if c.ChangeType == fsdiffer.Added || c.ChangeType == fsdiffer.Modified {
-			files[filepath.Join(rootFS, c.Path)] = struct{}{}
+			files[filepath.Join(b.path, c.Path)] = struct{}{}
 		}
 		if hasDeleted == false && c.ChangeType == fsdiffer.Deleted {
 			hasDeleted = true
@@ -55,8 +53,8 @@ func (b *DiffACIBuilder) Build(im schema.ImageManifest, out io.Writer) error {
 	// Compose pathWhiteList only if there're some deleted files
 	pathWhitelist := []string{}
 	if hasDeleted {
-		err = filepath.Walk(rootFS, func(path string, info os.FileInfo, err error) error {
-			relpath, err := filepath.Rel(rootFS, path)
+		err = filepath.Walk(b.path, func(path string, info os.FileInfo, err error) error {
+			relpath, err := filepath.Rel(b.path, path)
 			if err != nil {
 				return err
 			}

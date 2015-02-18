@@ -12,8 +12,8 @@ import (
 )
 
 // SimpleACIBuilder is an ACIBuilder that creates an ACI containing the
-// file in the "./rootfs/" of provided path plus the provided imagemanifest
-// without any change.
+// file in the provided path (which should be the rootfs)
+// plus the provided imagemanifest without any change.
 type SimpleACIBuilder struct {
 	path string
 }

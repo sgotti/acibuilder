@@ -11,8 +11,8 @@ import (
 )
 
 // BuildWalker creates a filepath.WalkFunc that walks over the given root
-// (which should represent an ACI layout on disk) and adds the files in the
-// rootfs/ subdirectory to the given ArchiveWriter
+// (which is the rootfs of the ACI on disk, NOT the ACI layout on disk) and
+// adds the files in the directory to the given ArchiveWriter
 func BuildWalker(root string, files map[string]struct{}, aw aci.ArchiveWriter) filepath.WalkFunc {
 	// cache of inode -> filepath, used to leverage hard links in the archive
 	inos := map[uint64]string{}
@@ -32,11 +32,6 @@ func BuildWalker(root string, files map[string]struct{}, aw aci.ArchiveWriter) f
 			return err
 		}
 		if relpath == "." {
-			return nil
-		}
-		if relpath == aci.ManifestFile {
-			// ignore; this will be written by the archive writer
-			// TODO(jonboulle): does this make sense? maybe just remove from archivewriter?
 			return nil
 		}
 
@@ -69,7 +64,7 @@ func BuildWalker(root string, files map[string]struct{}, aw aci.ArchiveWriter) f
 		// name of the file it describes, it may be necessary to
 		// modify the Name field of the returned header to provide the
 		// full path name of the file.
-		hdr.Name = relpath
+		hdr.Name = filepath.Join("rootfs", relpath)
 		tarheader.Populate(hdr, info, inos)
 		// If the file is a hard link to a file we've already seen, we
 		// don't need the contents

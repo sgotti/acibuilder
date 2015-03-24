@@ -8,10 +8,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/appc/spec/aci"
-	"github.com/appc/spec/schema"
-
-	"github.com/sgotti/fsdiffer"
+	"github.com/sgotti/acibuilder/Godeps/_workspace/src/github.com/appc/spec/aci"
+	"github.com/sgotti/acibuilder/Godeps/_workspace/src/github.com/appc/spec/schema"
+	"github.com/sgotti/acibuilder/Godeps/_workspace/src/github.com/sgotti/fsdiffer"
 )
 
 // DiffACIBuilder is an ACIBuilder that creates an ACI containing only the

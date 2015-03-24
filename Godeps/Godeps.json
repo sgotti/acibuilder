@@ -1,0 +1,45 @@
+{
+	"ImportPath": "github.com/sgotti/acibuilder",
+	"GoVersion": "go1.4.2",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/GoogleCloudPlatform/kubernetes/pkg/api/resource",
+			"Comment": "v0.12.0-270-g53ec66c",
+			"Rev": "53ec66caf4e952a1384ec93b9f0cde37616e4caf"
+		},
+		{
+			"ImportPath": "github.com/appc/spec/aci",
+			"Comment": "v0.5.0-6-gacb00f3",
+			"Rev": "acb00f33bd2e423182f25888269e399bef75dd26"
+		},
+		{
+			"ImportPath": "github.com/appc/spec/pkg/tarheader",
+			"Comment": "v0.5.0-6-gacb00f3",
+			"Rev": "acb00f33bd2e423182f25888269e399bef75dd26"
+		},
+		{
+			"ImportPath": "github.com/appc/spec/schema",
+			"Comment": "v0.5.0-6-gacb00f3",
+			"Rev": "acb00f33bd2e423182f25888269e399bef75dd26"
+		},
+		{
+			"ImportPath": "github.com/coreos/go-semver/semver",
+			"Rev": "6fe83ccda8fb9b7549c9ab4ba47f47858bc950aa"
+		},
+		{
+			"ImportPath": "github.com/sgotti/fsdiffer",
+			"Rev": "6a1ed1b038aee0b1c258cd175d6da97a9440322c"
+		},
+		{
+			"ImportPath": "github.com/spf13/pflag",
+			"Rev": "370c3171201099fa6b466db45c8a032cbce33d8d"
+		},
+		{
+			"ImportPath": "speter.net/go/exp/math/dec/inf",
+			"Rev": "42ca6cd68aa922bc3f32f1e056e61b65945d9ad7"
+		}
+	]
+}

@@ -3,7 +3,7 @@ package acibuilder
 import (
 	"io"
 
-	"github.com/appc/spec/schema"
+	"github.com/sgotti/acibuilder/Godeps/_workspace/src/github.com/appc/spec/schema"
 )
 
 // ACIBuilder creates an aci given a starting ImageManifest and an output io.Writer

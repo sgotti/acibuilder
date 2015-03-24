@@ -7,8 +7,8 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/appc/spec/aci"
-	"github.com/appc/spec/schema"
+	"github.com/sgotti/acibuilder/Godeps/_workspace/src/github.com/appc/spec/aci"
+	"github.com/sgotti/acibuilder/Godeps/_workspace/src/github.com/appc/spec/schema"
 )
 
 // SimpleACIBuilder is an ACIBuilder that creates an ACI containing the
